@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root { --primary: #4285f4; --bg: #ffffff; --text: #333; --border: #edf2f7; }
+        
+        /* 基础容器 */
+        body { 
+            width: 380px; 
+            max-height: 580px; 
+            padding: 16px; 
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            overflow: hidden; 
+            box-sizing: border-box;
+        }
+        
+        h3 { font-size: 16px; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px; }
+        
+        /* 搜索框 */
+        #search-folder { 
+            width: 100%; padding: 10px 12px; border: 2px solid var(--border); 
+            border-radius: 10px; margin-bottom: 12px; outline: none; transition: 0.2s;
+            font-size: 13px; box-sizing: border-box;
+        }
+        #search-folder:focus { border-color: var(--primary); }
+
+        /* 快捷按钮 */
+        .controls { display: flex; gap: 6px; margin-bottom: 12px; }
+        .btn-small { 
+            flex: 1; padding: 6px 0; font-size: 11px; cursor: pointer; border: 1px solid var(--border); 
+            background: #f8fafc; border-radius: 6px; color: #64748b;
+        }
+
+        /* 树形列表容器（隐藏滚动条） */
+        #tree-container { 
+            height: 300px; /* 稍微调低了一点点，给底部留空间 */
+            overflow-y: auto; 
+            background: #fff;
+            padding: 4px; 
+            margin-bottom: 12px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        #tree-container::-webkit-scrollbar { display: none; }
+
+        .tree-item { margin: 2px 0; }
+        .folder-label { 
+            display: flex; align-items: center; cursor: pointer; font-size: 13px; 
+            padding: 6px 8px; border-radius: 8px;
+        }
+        .folder-label:hover { background: #f8fafc; }
+        .folder-label input { width: 15px; height: 15px; margin-right: 10px; accent-color: var(--primary); }
+        .hidden { display: none !important; }
+
+        /* 导出按钮 */
+        #export-btn { 
+            width: 100%; padding: 12px; background: var(--primary); color: white; 
+            border: none; cursor: pointer; border-radius: 10px; font-weight: 600;
+            font-size: 14px; margin-bottom: 12px;
+        }
+
+        /* --- 新增的底部样式 --- */
+        .divider { height: 1px; background: var(--border); margin: 8px 0 12px 0; }
+        .author-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .left-info { display: flex; gap: 8px; align-items: center; }
+        .version { background: #f1f5f9; padding: 1px 5px; border-radius: 4px; font-size: 10px; color: #64748b; }
+        .right-links { display: flex; gap: 12px; }
+        .right-links a {
+            display: flex; align-items: center; gap: 4px; color: #64748b;
+            text-decoration: none; transition: 0.2s;
+        }
+        .right-links a:hover { color: var(--primary); }
+								
+								/* 找到之前的 h3 样式并确保它包含这些，或者直接添加以下内容 */
+								h3 { 
+								    font-size: 16px; 
+								    margin: 0 0 12px 0; 
+								    display: flex; 
+								    align-items: center; /* 确保图标和文字垂直居中 */
+								    gap: 10px;           /* 图标和文字之间的间距 */
+								}
+								
+								.logo-img {
+								    width: 22px;         /* 稍微比文字大一点点，看起来更大气 */
+								    height: 22px;
+								    border-radius: 4px;  /* 如果你的图标是方角的，加一点点圆角会更柔和 */
+								    object-fit: contain;
+								}
+								.logo-img {
+								    width: 22px;
+								    height: 22px;
+								    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); /* 增加轻微投影 */
+								}
+    </style>
+</head>
+<body>
+    <h3><img src="icons/icon48.png" class="logo-img"> J-Mark</h3>
+    <input type="text" id="search-folder" placeholder="搜索文件夹...">
+    
+    <div class="controls">
+        <button class="btn-small" id="select-all">全选</button>
+        <button class="btn-small" id="select-none">反选</button>
+        <button class="btn-small" id="select-visible">选结果</button>
+    </div>
+
+    <div id="tree-container">加载中...</div>
+
+    <button id="export-btn">导出并下载数据</button>
+
+    <div class="footer">
+        <div class="divider"></div>
+        <div class="author-info">
+            <div class="left-info">
+                <span>© 2026 江大爷</span>
+                <span class="version">v1.0.0</span>
+            </div>
+            <div class="right-links">
+                <a href="https://github.com/你的用户名/仓库名/issues" target="_blank">💬 反馈</a>
+                <a href="https://github.com/你的用户名/仓库名" target="_blank">
+                    <svg height="12" width="12" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="exporter.js"></script>
+</body>
+</html>
