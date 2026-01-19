@@ -18,7 +18,7 @@
 点击 加载解压的扩展程序，选择 J-Mark 根目录。
 
 固定插件，即刻开始高效管理书签。
-
+edge 安装地址 [https://microsoftedge.microsoft.com/addons/detail/kjphfpemhomnhfcojhgbombbipkginma](https://microsoftedge.microsoft.com/addons/detail/kjphfpemhomnhfcojhgbombbipkginma)
 📖 使用指南
 点击插件图标弹出界面。
 
